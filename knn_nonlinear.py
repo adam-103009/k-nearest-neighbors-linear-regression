@@ -17,12 +17,7 @@ class myKnnLinearRegression():
             neighbors = self.search_closet_point(distance_table,i)
             # 根據index取出點的x,y值
             neighbors_x, neighbors_y = self.getNeighbors(neighbors)
-            # 找出這k個點的linear regression的係數
-            beta = self.linear_regression(neighbors_x,neighbors_y)
-            # 利用這些係數來求得predict值
-            predict_y[i] = beta[0]
-            for j in range(len(test_point[i])):
-                predict_y[i] = predict_y[i]+beta[j+1]*test_point[i][j]
+            predict_y[i] = neighbors_y.mean()
         return predict_y
     def search_closet_point(self,distance_table,i):
         neighbors = np.argsort(distance_table[i])[:self.n_neighbors]
@@ -92,7 +87,8 @@ if __name__ == '__main__':
     # 讀取資料 data1
     data = np.load('data/data1.npz')
     train_size = 700
-    k = 3
+    k = 7
+
     model = myKnnLinearRegression(k = k)
     train_X,train_Y,test_x,test_y = splictTrainTest(data['X'],data['y'],train_size)
     model.fit(train_X,train_Y)
@@ -113,7 +109,7 @@ if __name__ == '__main__':
     # calculate root mean square error
     rmse = getRMSE(test_y,predict_y)
     print("RMSE for data2",rmse)
-
+    
     # 畫圖
     #data1
     fig = plt.figure()
